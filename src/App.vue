@@ -15,8 +15,6 @@
       <router-link tag="div" to="/seller" class="tab-item">
         <a>商家</a>
       </router-link>
-
-
     </div>
     <router-view></router-view>
   </div>
