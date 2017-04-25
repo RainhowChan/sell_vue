@@ -29,19 +29,24 @@
                 <div class="price">
                   <span class="now">&yen;{{food.price}}</span><span class="old" v-show="food.oldPrice">&yen;{{food.oldPrice}}</span>
                 </div>
+                <div class="cartcontrol-wrapper">
+                  <v-cartcontrol :food="food" @cartadd="controlElement"></v-cartcontrol>
+                </div>
               </div>
             </li>
           </ul>
         </li>
       </ul>
     </div>
-    <!--<v-shopcart></v-shopcart>-->
+    <v-shopcart ref="shopcart" :select-foods="selectFoods" :delivery-price="seller.deliveryPrice"
+                :min-price="seller.minPrice"></v-shopcart>
   </div>
 </template>
 
 <script type='text/ecmascript-6'>
   import BScroll from 'better-scroll';
   import shopCart from '../shopcart/shopcart';
+  import cartControl from '../cartcontrol/cartcontrol';
 
   const ERR_OK = 0;
 
@@ -77,6 +82,7 @@
           click: true
         });
         this.foodsScroll = new BScroll(this.$refs.food, {
+          click: true,
           probeType: 3
         });
         this.foodsScroll.on('scroll', pos => {
@@ -99,6 +105,11 @@
           let el = foodList[index];
           this.foodsScroll.scrollToElement(el, 300);
         }
+      },
+      controlElement(element) {
+        this.$nextTick(() => { // 优化体验  异步执行动画
+          this.$refs.shopcart.drop(element);
+        });
       }
     },
     computed: {
@@ -111,12 +122,23 @@
           }
         }
         return 0;
+      },
+      selectFoods() {
+        let foods = [];
+        this.goods.forEach(goods => {
+          goods.foods.forEach(food => {
+            if (food.count) {
+              foods.push(food);
+            }
+          });
+        });
+        return foods;
       }
     },
     components: {
-      'v-shopcart': shopCart
+      'v-shopcart': shopCart,
+      'v-cartcontrol': cartControl
     }
-
   };
 </script>
 

@@ -16,7 +16,7 @@
         <a>商家</a>
       </router-link>
     </div>
-    <router-view></router-view>
+    <router-view :seller="seller"></router-view>
   </div>
 </template>
 
