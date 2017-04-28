@@ -12,28 +12,36 @@
         <a>商家</a>
       </router-link>
     </div>
-    <router-view :seller="seller"></router-view>
+    <keep-alive>
+      <router-view :seller="seller"></router-view>
+    </keep-alive>
   </div>
 </template>
 
 <script>
   import header from './components/header/Header';
-
+  import {urlParse} from './common/script/urlParse';
   const ERR_OK = 0;
 
   export default {
     name: 'app',
     data() {
       return {
-        seller: {}
+        seller: {
+          id: (() => {
+            let queryParam = urlParse();
+            return queryParam.id;
+          })()
+        }
       };
     },
     created() {
-      this.$http.get('/api/seller')
+      this.$http.get('/api/seller?id=' + this.seller.id)
         .then((response) => {
           response = response.body;
           if (response.errno === ERR_OK) {
-            this.seller = response.data;
+//            this.seller = response.data;
+            this.seller = Object.assign({}, this.seller, response.data);
           }
         });
     },
